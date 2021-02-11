@@ -95,11 +95,13 @@ return RuleBuilder.create(ruleDto.uid)
 		try{
 			var ruid = uuid.randomUUID() + "-" + obj.name.replace(/[^\w]/g, "-");
 			logInfo("################  JSRule Line: "+__LINE__+"  ################# ruid:" + ruid);
+			
+
 			//var rule = new SimpleRule({ setUID: function(i) { uid = i; } })
-			var rule = new SimpleRule(){
+			var rule = new SimpleRule({
 				execute: obj.execute //DOES THIS WORK? AND IF YES, WHY? => execute is found in implemented SimpleRuleActionHandler
-			};
-			var triggers = obj.triggers ? obj.triggers : obj.getEventTrigger();
+			});
+			var triggers = obj.triggers ? decodeTriggers(obj.triggers) : obj.getEventTrigger();
 
 			rule.setTemplateUID(ruid);
 
@@ -108,6 +110,10 @@ return RuleBuilder.create(ruleDto.uid)
 			}
 			if (obj.name) {
 				rule.setName(obj.name);
+			}
+
+			if (obj.conditions){
+				rule.setConditions(obj.conditions);
 			}
 
 			//1. Register rule here
@@ -126,7 +132,6 @@ return RuleBuilder.create(ruleDto.uid)
 		}
 		return null;
 	},
-
 	//TODO like in org.openhab.core.automation.core.dto.RuleDTOMapper 
 	// or org.openhab.core.automation.sample.extension.java.internal.WelcomeHomeRulesProvider
 	//Missing SimpleRuleActionHandler!!
